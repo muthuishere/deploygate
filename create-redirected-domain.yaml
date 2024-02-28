@@ -1,0 +1,14 @@
+---
+- name: Start kubectl port-forward in background
+  hosts: muthuishere.com
+  gather_facts: yes
+  tasks:
+    - name: Install nginx-domain-assist globally
+      shell: npm install -g nginx-domain-assist
+
+    - name: Run create-redirected-nginx-domain command
+      shell: create-redirected-nginx-domain --domain "{{ domainName }}" --port {{ redirectPort }} --useSSL {{ enableSSL }}
+      vars:
+        domain: test.muthuishere.com
+        nodePort: 9898
+        useSSL: true

@@ -1,0 +1,14 @@
+---
+- name: Delete Domain Redirect for Nginx
+  hosts: <%= hostname %>
+  gather_facts: yes
+  tasks:
+    - name: Install nginx-domain-assist globally
+      shell: npm install -g nginx-domain-assist
+
+    - name: delete-nginx-domain
+      shell: delete-nginx-domain --domain "{{ domainName }}"
+      vars:
+        domainName: <%= domainName %>
+
+
