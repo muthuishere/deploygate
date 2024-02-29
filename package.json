@@ -10,7 +10,7 @@
     "publish-package": "npm publish"
   },
   "bin": {
-    "create-domain": "bin/create_domain.js",
+    "create_domain": "bin/create_domain.js",
     "delete-domain": "bin/delete_domain.js",
     "deploy-app": "bin/deploy_app.js",
     "init-config": "bin/init_config.js",

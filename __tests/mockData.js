@@ -19,7 +19,8 @@ export const testRedirectPort =9898;
     "remoteServerAlias": process.env.REMOTE_SERVER_ALIAS || "test@something.com",
     "ansibleHostName": process.env.ANSIBLE_HOST_NAME ||"something.com",
     "customRegistryUrl": process.env.CUSTOM_REGISTRY_URL ||"registry.something.com",
-    "customRegistryCredentialsName": process.env.CUSTOM_REGISTRY_CREDENTIALS_NAME ||"temp-credentials"
+    "customRegistryCredentialsName": process.env.CUSTOM_REGISTRY_CREDENTIALS_NAME ||"temp-credentials",
+    "kubeConfigPath": process.env.KUBE_CONFIG_PATH ||""
 };
 
 

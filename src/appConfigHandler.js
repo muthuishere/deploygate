@@ -10,7 +10,14 @@ import fileService from "./shared/files.js";
 
 export const CONFIG_PATH = path.join(os.homedir(), 'deploygateconfig.json');
 const options = {
-
+    kubeConfigPath: {
+        message: 'Kube Config Path?',
+        name: 'kubeConfigPath',
+        demandOption: true,
+        describe: 'Kube Config Path',
+        type: 'string',
+        default: "",
+    },
     remoteServerAlias: {
         // inquirer
         message: 'Name of remote Server Alias?',
@@ -52,7 +59,8 @@ const options = {
         describe: 'Custom Registry Credentials Name',
         type: 'string',
         default: "registry-credentials",
-    },
+    }
+
 };
 
 
@@ -90,7 +98,9 @@ await    fileService.writeFile(CONFIG_PATH, JSON.stringify(inputs, null, 2))
  * remoteServerAlias:string,
  * ansibleHostName:string,
  * customRegistryUrl:string,
- * customRegistryCredentialsName:string}>}
+ * customRegistryCredentialsName:string
+ * kubeConfigPath:string
+ * }>}
  */
 export async function loadDeployGateConfig() {
 
@@ -103,7 +113,7 @@ export async function loadDeployGateConfig() {
 
 }
 
-function appConfigExists() {
+export function appConfigExists() {
     return fileService.fileExists(CONFIG_PATH)
 }
 

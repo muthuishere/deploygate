@@ -68,7 +68,7 @@ deploy-gate remove-config
 To build a domain on a specific port, use the following command:
 
 ```bash
-deploy-gate build-domain-on-port --subdomain <subdomain> --port <port> --ssl <true/false>
+deploy-gate create_domain --domainName <domain> --redirectPort <port> --enableSSL <true/false>
 ```
 
 ### Delete Domain
@@ -76,7 +76,7 @@ deploy-gate build-domain-on-port --subdomain <subdomain> --port <port> --ssl <tr
 To delete a domain, use the following command:
 
 ```bash
-deploy-gate delete-domain --domain <domain>
+deploy-gate delete-domain --domainName <domain>
 ```
 
 ### Deploy App

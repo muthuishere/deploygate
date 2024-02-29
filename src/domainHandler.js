@@ -6,7 +6,7 @@ import * as ejs from "ejs";
 import {runPlayBookContents} from "./ansible/PlaybookRunner.js";
 import chalk from "chalk";
 
-const options = {
+const createDomainOptions = {
 
     domainName: {
         // inquirer
@@ -44,10 +44,27 @@ const options = {
 
 };
 
+const deleteDomainOptions = {
+
+    domainName: {
+        // inquirer
+        message: 'Name of Domain to be deleted?',
+        name: 'domainName',
+        // yargs
+        demandOption: true,
+        describe: 'Name of the domain to be deleted',
+        // shared
+        type: 'string',
+        default: '',
+    }
+
+
+};
+
 export async function handleCreateDomain(processArgs) {
 
     const config = await appConfigHandler.loadDeployGateConfig()
-    const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,options);
+    const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,createDomainOptions);
 
     console.log("Creating domain",inputs);
 
@@ -68,7 +85,7 @@ const result=    await runPlayBookContents(contents);
 export async function handleDeleteDomain(processArgs) {
 
     const config = await appConfigHandler.loadDeployGateConfig()
-    const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,options);
+    const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,deleteDomainOptions);
 
     const domainName = inputs.domainName;
     console.log("Deleting domain",inputs);

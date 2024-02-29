@@ -3,7 +3,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import * as appConfigHandler from "../src/appConfigHandler.js";
-import {handleCreateDomain} from "../src/domainHandler.js";
+import {handleCreateDomain, handleDeleteDomain} from "../src/domainHandler.js";
 import chalk from "chalk";
 
 // Handle the create-domain command
@@ -20,12 +20,12 @@ import chalk from "chalk";
             process.exit(1);
         }
 
-        await   handleCreateDomain(processArgs)
+        await   handleDeleteDomain(processArgs)
 
         // await createStaticDomain(inputs);
     }catch (err) {
 
-        console.error(chalk.red("Error Creating Domain"), err);
+        console.error(chalk.red("Error Deleting Domain"), err);
         // console.error(err);
         process.exit(1);
     }
