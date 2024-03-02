@@ -16,11 +16,12 @@ import chalk from "chalk";
         const processArgs = process.argv;
 
         if(appConfigHandler.appConfigExists() === false){
-            console.log('App Config does not exist. Please run init-config')
+            console.log('App Config does not exist. Please run init-deploy-gate-config')
             process.exit(1);
         }
 
         await   handleCreateDomain(processArgs)
+        console.log(chalk.green("Domain Created Successfully"));
 
         // await createStaticDomain(inputs);
     }catch (err) {

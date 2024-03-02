@@ -45,7 +45,7 @@ const secretOptions= {
         const processArgs = process.argv;
 
         if(appConfigHandler.appConfigExists() === false){
-            console.log('App Config does not exist. Please run init-config')
+            console.log('App Config does not exist. Please run init-deploy-gate-config')
             process.exit(1);
         }
         const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,secretOptions);

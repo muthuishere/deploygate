@@ -60,7 +60,7 @@ export async function handleCreateDomain(processArgs) {
 const result=    await runPlayBookContents(contents);
 // console.log(result)
 
-    console.log(chalk.green("Domain Created Successfully"));
+ return result.stdout.join("\n")
 
 
 

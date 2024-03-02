@@ -99,6 +99,9 @@ export async function handleGenerateK8sAppConfig(inputs) {
     });
     const deploymentContents = generateDeploymentContents(createSecretResponse, deployTemplateContents, customRegistryCredentialsName);
 
+    const deploymentFilePath = path.join(deliveryFolder, `${appName}-deployment.yaml`);
+    await    fileService.writeFile(deploymentFilePath, deploymentContents);
+
     console.log(deploymentContents)
 
     const serviceTemplate = await fileService.readFile(getServiceFilePath());
@@ -108,10 +111,21 @@ export async function handleGenerateK8sAppConfig(inputs) {
         exposedPort
     });
     console.log(serviceContents)
+    const serviceFilePath = path.join(deliveryFolder, `${appName}-service.yaml`);
+await    fileService.writeFile(serviceFilePath, serviceContents);
 
     const {ansibleHostName} = await appConfigHandler.loadDeployGateConfig()
     const createDomainResponse  = await createDomainBasedOn(ansibleHostName, {domainName, redirectPort:exposedPort, enableSSL})
     console.log(createDomainResponse)
+
+
+    return {
+        deploymentFilePath,
+        serviceFilePath,
+        createSecretResponse,
+        createDomainResponse
+
+    };
 
 
 

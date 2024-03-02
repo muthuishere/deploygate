@@ -35,13 +35,14 @@ const options = {
         const processArgs = process.argv;
 
         if(appConfigHandler.appConfigExists() === false){
-            console.log('App Config does not exist. Please run init-config')
+            console.log('App Config does not exist. Please run init-deploy-gate-config')
             process.exit(1);
         }
         const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,options);
 
 
         await   handleDeleteDomain(inputs)
+        console.log(chalk.green("Domain Deleted Successfully"));
 
         // await createStaticDomain(inputs);
     }catch (err) {
