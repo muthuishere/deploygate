@@ -1,4 +1,4 @@
-import  appConfigHandler from "./appConfigHandler.js";
+import appConfigHandler from "./appConfigHandler.js";
 import input_arg_processor from "./shared/input_arg_processor.js";
 import path from "path";
 import fileService from "./shared/files.js";
@@ -44,22 +44,6 @@ const createDomainOptions = {
 
 };
 
-const deleteDomainOptions = {
-
-    domainName: {
-        // inquirer
-        message: 'Name of Domain to be deleted?',
-        name: 'domainName',
-        // yargs
-        demandOption: true,
-        describe: 'Name of the domain to be deleted',
-        // shared
-        type: 'string',
-        default: '',
-    }
-
-
-};
 
 export async function handleCreateDomain(processArgs) {
 
@@ -82,29 +66,86 @@ const result=    await runPlayBookContents(contents);
 
 
 }
-export async function handleDeleteDomain(processArgs) {
+export async function handleDeleteDomain(inputs) {
 
     const config = await appConfigHandler.loadDeployGateConfig()
-    const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,deleteDomainOptions);
-
     const domainName = inputs.domainName;
-    console.log("Deleting domain",inputs);
+
 
     const hostname = config.ansibleHostName;
 
-    const createDomainFilePath = getDeleteDomainFilePath();
+    const deleteDomainFilePath = getDeleteDomainFilePath();
 
-    const template = await fileService.readFile(createDomainFilePath);
+    const template = await fileService.readFile(deleteDomainFilePath);
     const contents = ejs.render(template, {
         hostname, domainName
     });
     const result=    await runPlayBookContents(contents);
 
+    if(result.code === 0){
+        return result.stdout.join("\n")
+    }else {
+        throw new Error("Error deleting domain" + result.stderr.join("\n"))
+    }
 
-    console.log(chalk.green("Domain Deleted Successfully"));
 
 
 
+}
+
+function getDomainStatusOutput(input){
+
+
+    if(input.code !== 0){
+        throw new Error("Error getting domain status" + input.stderr.join("\n"))
+    }
+
+
+    const findString = "domain-status-by-name"
+    const lines=   input.stdout
+        .filter((line) => line.trim().startsWith("changed"))
+        .filter((line) => {
+            return line.includes(findString)
+        });
+
+    if(lines.length == 0){
+        throw new Error("No line found")
+    }
+    if(lines.length > 1){
+        throw new Error("More than one line found")
+    }
+
+    let line = lines[0];
+    if(line.includes("=>")){
+        line = line.split("=>")[1].trim()
+        const buffer  = JSON.parse(line)
+        const result = buffer.stdout
+        return    JSON.parse(result);
+
+
+
+    }else {
+        throw new Error("No => found, found only" +line)
+    }
+}
+export async function getDomainStatus({domainName}) {
+
+    const config = await appConfigHandler.loadDeployGateConfig()
+
+
+    const hostname = config.ansibleHostName;
+
+    const domainStatusFilePath = getDomainStatusFilePath();
+
+    const template = await fileService.readFile(domainStatusFilePath);
+    const contents = ejs.render(template, {
+        hostname, domainName
+    });
+    const playbookResult=    await runPlayBookContents(contents);
+
+
+
+    return getDomainStatusOutput(playbookResult);
 
 }
 
@@ -118,7 +159,12 @@ function getDeleteDomainFilePath() {
 }
 
 
-async function createDomainBasedOn(hostname, {domainName, redirectPort, enableSSL}) {
+function getDomainStatusFilePath() {
+    return path.join(fileService.getProjectRootFolder(), 'assets','domainmanager', 'get-domain-status.yaml');
+}
+
+
+export async function createDomainBasedOn(hostname, {domainName, redirectPort, enableSSL}) {
 
     // console.log("Creating domain based on hostname", hostname);
     // console.log("Creating domain based on domainName", domainName,redirectPort,enableSSL);
@@ -129,3 +175,5 @@ async function createDomainBasedOn(hostname, {domainName, redirectPort, enableSS
         hostname, domainName, redirectPort, enableSSL
     });
 }
+
+

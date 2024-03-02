@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import appConfigHandler from "./appConfigHandler.js";
 import input_arg_processor from "./shared/input_arg_processor.js";
 import  * as mockdata from '../__tests/mockData.js';
-import {handleCreateDomain, handleDeleteDomain} from './domainHandler.js';
+import {handleCreateDomain, handleDeleteDomain, getDomainStatus} from './domainHandler.js';
 import fileService from "./shared/files.js";
 import {getConfig} from "../__tests/mockData.js";
 
@@ -54,6 +54,32 @@ describe('handleCreateDomain', () => {
         expect(loadDeployGateConfigStub.calledOnce).to.be.true;
         expect(getParametersBasedOnOptionsStub.calledOnce).to.be.true;
         // expect(writeFileStub.calledOnceWith('create-redirected-domain.yaml', contents)).to.be.true;
+    });
+    it('should create domain successfully', async () => {
+
+
+
+        getParametersBasedOnOptionsStub.resolves(options);
+        await createTestDomain(processArgs);
+
+        expect(loadDeployGateConfigStub.calledOnce).to.be.true;
+        expect(getParametersBasedOnOptionsStub.calledOnce).to.be.true;
+        // expect(writeFileStub.calledOnceWith('create-redirected-domain.yaml', contents)).to.be.true;
+    });
+    it('should get status of domain successfully', async () => {
+
+
+        const  validDomain = process.env.VALID_SUB_DOMAIN;
+        console.log(validDomain);
+
+
+        const result = await    getDomainStatus({domainName: validDomain});
+        console.log(result);
+        expect(result).not.to.be.null
+        expect(result).hasOwnProperty('isAvailable')
+        expect(result.isAvailable).to.be.true;
+
+
     });
     it('should throw error for invalid host', async () => {
 
@@ -107,9 +133,10 @@ describe('handleDeleteDomain', () => {
 
 
 
-        await handleDeleteDomain(processArgs);
+             const result = await handleDeleteDomain({domainName: process.env.VALID_SUB_DOMAIN});
+              expect(result).not.to.be.null
 
-        // expect(writeFileStub.calledOnceWith('create-redirected-domain.yaml', contents)).to.be.true;
+
     });
     it('should throw error for invalid host', async () => {
 
@@ -120,7 +147,7 @@ describe('handleDeleteDomain', () => {
         // writeFileStub.resolves();
 
         try {
-            await handleDeleteDomain(processArgs);
+            await handleDeleteDomain({domainName: process.env.VALID_SUB_DOMAIN});
             expect.fail('Expected an error to be thrown');
         }catch (e) {
 

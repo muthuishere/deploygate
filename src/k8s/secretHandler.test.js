@@ -1,5 +1,5 @@
 import * as k8sSecretHandler from './secretHandler.js';
-import {createSecretsFromEnvFile, envToJson, handleGetAllSecrets, isSecretExists} from './secretHandler.js';
+import {envToJson, handleGetAllSecrets, isSecretExists} from './secretHandler.js';
 import {assert} from 'chai';
 import * as mockdata from "../../__tests/mockData.js";
 import sinon from "sinon";

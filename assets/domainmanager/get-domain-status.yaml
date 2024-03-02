@@ -1,0 +1,28 @@
+---
+- name: Get Domain Status for Nginx
+  hosts: <%= hostname %>
+  gather_facts: yes
+  tasks:
+    - name: Check if npm is installed
+      command: npm --version
+      register: npm_version
+      failed_when: npm_version.rc != 0
+
+    - name: Check if nginx is installed
+      shell: nginx -v
+      register: nginx_version
+      ignore_errors: yes
+
+    - name: Install nginx if not installed
+      apt:
+        name: nginx
+        state: present
+      when: nginx_version.rc != 0
+      become: true
+    - name: Install nginx-domain-assist globally
+      shell: npm install -g nginx-domain-assist
+
+    - name: Run domain-status-by-name command
+      shell: domain-status-by-name --domain "{{ domainName }}"
+      vars:
+        domainName: <%= domainName %>

@@ -3,21 +3,19 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import * as appConfigHandler from "../src/appConfigHandler.js";
-import {handleCreateDomain, handleDeleteDomain} from "../src/domainHandler.js";
+import {getDomainStatus, handleCreateDomain, handleDeleteDomain} from "../src/domainHandler.js";
 import chalk from "chalk";
-import input_arg_processor from "../src/shared/input_arg_processor.js";
 
-// Handle the create-domain command
 
-const options = {
+const options= {
 
-    domainName: {
+    appName: {
         // inquirer
-        message: 'Name of Domain to be deleted?',
-        name: 'domainName',
+        message: 'Name of  Secret Group?',
+        name: 'appName',
         // yargs
         demandOption: true,
-        describe: 'Name of the domain to be deleted',
+        describe: 'Name of the Secret Group to be created',
         // shared
         type: 'string',
         default: '',
@@ -25,6 +23,7 @@ const options = {
 
 
 };
+
 
 
 (async () => {
@@ -38,10 +37,8 @@ const options = {
             console.log('App Config does not exist. Please run init-config')
             process.exit(1);
         }
-        const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,options);
 
-
-        await   handleDeleteDomain(inputs)
+        await   getDomainStatus(processArgs)
 
         // await createStaticDomain(inputs);
     }catch (err) {

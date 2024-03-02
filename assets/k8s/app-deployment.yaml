@@ -3,10 +3,10 @@ kind: Deployment
 metadata:
   name: <%= appName %>-deployment
 spec:
-  replicas: 1
+  replicas: <%= appName %>
   selector:
     matchLabels:
-      app: <%= appName %>
+      app: <%= replicas %>
   template:
     metadata:
       labels:
@@ -18,5 +18,4 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: <%= appPort %>
-      imagePullSecrets:
-        - name: <%= imagePullSecret %>
+

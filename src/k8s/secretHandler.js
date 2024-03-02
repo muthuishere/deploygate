@@ -16,6 +16,9 @@ function getSecretFilePath() {
 
 
 
+/*
+@returns {Promise<{}>}
+ */
 export async function envToJson(filePath) {
     try {
         // Read the contents of the file
@@ -47,15 +50,28 @@ export async function handleCreateSecrets(inputs) {
 
     }
 
-    const contents = await createSecretsFromEnvFile(appName, filePath);
-    return await executeKubectlContents(contents);
+    // const contents = await createSecretsFromEnvFile(appName, filePath);
+    const entries = await envToJson(filePath);
+    const contents= await createYmlBasedOnJson(entries, appName);
+
+    const  results= await executeKubectlContents(contents);
+    if(results.code !== 0) {
+        throw new Error(results.stderr);
+    }
+    // const entries = await envToJson(filePath);
+
+    return {
+        secretGroupName: appName,
+        keys: Object.keys(entries)
+    }
+
+
 }
 
-export async function createSecretsFromEnvFile(appName,filePath){
-    const entries = await envToJson(filePath);
+async function createYmlBasedOnJson(entries, appName) {
     const secrets = {}
     for (const [key, value] of Object.entries(entries)) {
-        secrets[key] =  base64Encode(value)
+        secrets[key] = base64Encode(value)
     }
     const secretFilePath = getSecretFilePath();
 
@@ -65,13 +81,18 @@ export async function createSecretsFromEnvFile(appName,filePath){
     });
 
     const yamlInstance = yaml.load(contents);
-    yamlInstance.data={}
+    yamlInstance.data = {}
     for (const [key, value] of Object.entries(secrets)) {
         // secrets[key] = base64Encode(value)
         yamlInstance.data[key] = secrets[key]
     }
     const newContents = yaml.dump(yamlInstance);
     return newContents;
+}
+
+export async function createSecretsFromEnvFile(appName,envFilePath){
+    const entries = await envToJson(envFilePath);
+    return await createYmlBasedOnJson(entries, appName);
 
 }
 export async function handleGetAllSecrets(secretGroupName) {

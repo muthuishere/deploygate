@@ -4,28 +4,19 @@ import {runProcess} from "../shared/system_processor.js";
 import {PlaybookResult} from "./PlaybookResult.js";
 import {exec} from "child_process";
 
-// export async function runPlayBookFile(filename) {
-//
-//
-//     const response = await runProcess("ansible-playbook", [filename, '-vv']);
-//     return response;
-// }
 
 
-async function runPlaybookFileold(filename) {
-    const response = await runProcess("ansible-playbook", [filename, '-vv']);
-    const tasks = processAnsibleOutput(response.stdout);
-    const overallStatus = determineOverallStatus(response.stderr, tasks);
-    let errorDetails = tasks.filter(task => task.status === 'Failed').map(task => task.stderr)
-    if (overallStatus === 'Failed') {
 
-        throw new Error(`Playbook execution failed: ${errorDetails.join('\n')}`);
-    }
-
-    return new PlaybookResult(tasks);
-}
-
-
+/**
+ *
+ * @param playbookPath
+ * @returns {Promise<{
+ *     stdout: string[],
+ *     stderr: string[],
+ *     code: number
+ *
+ * }>}
+ */
 async function runPlaybookFile(playbookPath) {
     console.log("Running Ansible playbook file",playbookPath)
 
@@ -42,9 +33,13 @@ async function runPlaybookFile(playbookPath) {
 }
 
 /**
-
- * @returns {Promise<PlaybookResult>}
- * @param playbook
+ *
+ * @returns {Promise<{
+ *     stdout: string[],
+ *     stderr: string[],
+ *     code: number
+ *
+ * }>}
  */
 
 export async function runPlayBookContents(contents) {

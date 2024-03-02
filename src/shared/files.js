@@ -102,7 +102,18 @@ export async function createFolder(path) {
 
 
 }
+export function folderExists(path) {
+    try {
+        // Use fs.statSync to get file system statistics
+        const stats = fs.statSync(path);
 
+        // Check if the path is a directory
+        return stats.isDirectory();
+    } catch (error) {
+        // If an error is thrown, it means the path does not exist
+        return false;
+    }
+}
 
 export async function createSymbolicLink(path, link) {
 
@@ -171,6 +182,7 @@ export default {
     writeFile:writeFile,
     readFile:readFile,
     fileExists:fileExists,
+    folderExists:folderExists,
     getFileContentOrEmpty:getFileContentOrEmpty,
 
     getProjectRootFolder:getProjectRootFolder
