@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <%= appName %>-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <%= appName %>
+  template:
+    metadata:
+      labels:
+        app: <%= appName %>
+    spec:
+      containers:
+        - name: <%= appName %>
+          image: <%= appImageUrl %>
+          imagePullPolicy: Always
+          ports:
+            - containerPort: <%= appPort %>
+      imagePullSecrets:
+        - name: <%= imagePullSecret %>

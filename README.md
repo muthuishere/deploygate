@@ -14,14 +14,16 @@ This project is a command-line interface (CLI) tool that helps manage your self-
 
 
 #### Pre-requisites
-- Make sure you have Ansible installed on your system and configured for the domain
-- Your domain is on Ubuntu
-- Your Ubuntu server has Docker and Docker Compose installed
-- Your Ubuntu server has Kubernetes installed
-- Your local machine has kubectl installed and set it to the remote machine
+- Your Local machine has Ansible installed 
+- Your local machine has kubectl installed
+- Your local machine has a jq installed
 - your local machine has an alias for the remote machine , so that you can access the remote machine with a single command
-- Your remote machine has certbot installed
-- Your remote machine has a domain name configured with NGINX
+- Make sure you have a domain name configured with NGINX
+- Your Target domain is on Ubuntu
+- Your Target domain can be accessed via SSH wia passwordless login
+- Your Target domain has Docker and Docker Compose installed
+- Your Target domain has certbot installed
+- Your Target domain has a domain name configured with NGINX
 
 
 

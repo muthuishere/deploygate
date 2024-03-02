@@ -20,7 +20,7 @@ export function runProcess(command, args) {
         process.stdout.on('data', (data) => {
             stdoutData.push(...data.toString().split(/\r?\n/));
             // console.log(data.toString());
-            logger.info(data.toString());
+            logger.debug(data.toString());
         });
 
         process.stderr.on('data', (data) => {

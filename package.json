@@ -10,12 +10,14 @@
     "publish-package": "npm publish"
   },
   "bin": {
-    "create_domain": "bin/create_domain.js",
+    "generate-app-config": "bin/generate_app_config.js",
+    "create-domain": "bin/create_domain.js",
     "delete-domain": "bin/delete_domain.js",
+    "create-secret": "bin/create_secrets.js",
     "deploy-app": "bin/deploy_app.js",
-    "init-config": "bin/init_config.js",
-    "update-config": "bin/init_config.js",
-    "remove-config": "bin/remove_config.js"
+    "init-deploy-gate-config": "bin/init_config.js",
+    "update-deploy-gate-config": "bin/init_config.js",
+    "remove-deploy-gate-config": "bin/remove_config.js"
   },
   "nyc": {
     "check-coverage": true,
@@ -78,10 +80,10 @@
     "chalk": "^5.3.0",
     "command-exists": "^1.2.9",
     "declarative-optional": "^2.1.10",
-    "dot-env": "^0.0.1",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "inquirer": "^9.2.12",
+    "js-base64": "^3.7.7",
     "js-yaml": "^4.1.0",
     "shelljs": "^0.8.5",
     "uuid": "^9.0.1",

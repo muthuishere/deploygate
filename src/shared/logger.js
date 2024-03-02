@@ -1,6 +1,6 @@
 // logger.js
 import {createLogger, format, transports} from 'winston';
-
+import 'dotenv/config'
 // Destructure the format module for ease of use
 const {combine, timestamp, printf, colorize, json} = format;
 

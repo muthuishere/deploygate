@@ -164,11 +164,14 @@ export function getDeliveryFolderName(appName) {
     return deliveryFolder;
 }
 
+
+
 export default {
     deleteFile:deleteFile,
     writeFile:writeFile,
     readFile:readFile,
     fileExists:fileExists,
     getFileContentOrEmpty:getFileContentOrEmpty,
+
     getProjectRootFolder:getProjectRootFolder
 }

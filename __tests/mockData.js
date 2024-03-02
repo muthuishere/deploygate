@@ -1,3 +1,5 @@
+import {fileURLToPath} from "url";
+import Path from "path";
 
 export const processArgs = [
     '',
@@ -20,14 +22,20 @@ export const testRedirectPort =9898;
     "ansibleHostName": process.env.ANSIBLE_HOST_NAME ||"something.com",
     "customRegistryUrl": process.env.CUSTOM_REGISTRY_URL ||"registry.something.com",
     "customRegistryCredentialsName": process.env.CUSTOM_REGISTRY_CREDENTIALS_NAME ||"temp-credentials",
+    "kubeNamespace": process.env.KUBE_NAMESPACE ||"default",
     "kubeConfigPath": process.env.KUBE_CONFIG_PATH ||""
 };
+
 
 
 export function getOptions(){
     return {...options};
 }
 
+/**
+ *
+ * @returns {customRegistryCredentialsName, kubeNamespace, remoteServerAlias, kubeConfigPath, ansibleHostName, customRegistryUrl}
+ */
 export function getConfig(){
     return {...config};
 
@@ -38,4 +46,20 @@ export function getProcessArgs(){
 }
 export function getDomainName(){
     return domainName;
+}
+export function getEnvFile(){
+    return process.env.ENV_FILE;
+}
+
+
+
+export function getProjectRootFolder() {
+    const __filename = fileURLToPath(import.meta.url);
+    const dirname = Path.dirname(__filename);
+    const folder = Path.resolve(dirname, '../')
+    return folder;
+}
+
+export function getEnvFilePath() {
+    return Path.join(getProjectRootFolder(), 'assets','data', '.env.example');
 }

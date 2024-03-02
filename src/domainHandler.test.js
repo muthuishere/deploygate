@@ -6,9 +6,14 @@ import input_arg_processor from "./shared/input_arg_processor.js";
 import  * as mockdata from '../__tests/mockData.js';
 import {handleCreateDomain, handleDeleteDomain} from './domainHandler.js';
 import fileService from "./shared/files.js";
+import {getConfig} from "../__tests/mockData.js";
 
 
+const processArgs = mockdata.getProcessArgs();
 
+const options =mockdata.getOptions();
+
+const config = mockdata.getConfig();
 
 async function createTestDomain(processArgs) {
 
@@ -22,19 +27,13 @@ async function createTestDomain(processArgs) {
 describe('handleCreateDomain', () => {
 
 
-    const processArgs = mockdata.processArgs;
 
-    let options =mockdata.getOptions();
-
-    let config = mockdata.getConfig();
 
     let loadDeployGateConfigStub, getParametersBasedOnOptionsStub, writeFileStub;
 
     beforeEach(() => {
-         options =mockdata.getOptions();
-
-         config = mockdata.getConfig();
         loadDeployGateConfigStub = sinon.stub(appConfigHandler, 'loadDeployGateConfig');
+        loadDeployGateConfigStub.resolves(mockdata.getConfig());
         getParametersBasedOnOptionsStub = sinon.stub(input_arg_processor, 'getParametersBasedOnOptions');
         // writeFileStub = sinon.stub(fileService, 'writeFile');
     });
@@ -48,7 +47,7 @@ describe('handleCreateDomain', () => {
     it('should create domain successfully', async () => {
 
 
-        loadDeployGateConfigStub.resolves(config);
+
         getParametersBasedOnOptionsStub.resolves(options);
         await createTestDomain(processArgs);
 
@@ -64,7 +63,7 @@ describe('handleCreateDomain', () => {
 
         // const contents = 'test contents';
 
-        loadDeployGateConfigStub.resolves(config);
+
         getParametersBasedOnOptionsStub.resolves(options);
         // writeFileStub.resolves();
 
@@ -82,9 +81,27 @@ describe('handleCreateDomain', () => {
 
         // expect(writeFileStub.calledOnceWith('create-redirected-domain.yaml', contents)).to.be.true;
     });
+});
+
+describe('handleDeleteDomain', () => {
+    let loadDeployGateConfigStub, getParametersBasedOnOptionsStub, writeFileStub;
+
+    beforeEach(() => {
+        loadDeployGateConfigStub = sinon.stub(appConfigHandler, 'loadDeployGateConfig');
+        loadDeployGateConfigStub.resolves(mockdata.getConfig());
+        getParametersBasedOnOptionsStub = sinon.stub(input_arg_processor, 'getParametersBasedOnOptions');
+        // writeFileStub = sinon.stub(fileService, 'writeFile');
+    });
+
+    afterEach(() => {
+        loadDeployGateConfigStub.restore();
+        getParametersBasedOnOptionsStub.restore();
+        // writeFileStub.restore();
+    });
+// working only if run seperately
     it('should  delete domain successfully', async () => {
 
-        loadDeployGateConfigStub.resolves(config);
+
         getParametersBasedOnOptionsStub.resolves(options);
         await createTestDomain(processArgs);
 

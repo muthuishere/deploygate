@@ -59,6 +59,15 @@ const options = {
         describe: 'Custom Registry Credentials Name',
         type: 'string',
         default: "registry-credentials",
+    },
+    kubeNamespace: {
+
+        message: 'Kubernetes Namespace ?',
+        name: 'kubeNamespace',
+        demandOption: true,
+        describe: 'Kubernetes Namespace',
+        type: 'string',
+        default: "default",
     }
 
 };
@@ -98,7 +107,8 @@ await    fileService.writeFile(CONFIG_PATH, JSON.stringify(inputs, null, 2))
  * remoteServerAlias:string,
  * ansibleHostName:string,
  * customRegistryUrl:string,
- * customRegistryCredentialsName:string
+ * customRegistryCredentialsName:string,
+ * kubeNamespace:string,
  * kubeConfigPath:string
  * }>}
  */
