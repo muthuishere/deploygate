@@ -1,6 +1,6 @@
 ---
 - name: Delete Domain Redirect for Nginx
-  hosts: <%= hostname %>
+  hosts: <%= hostName %>
   gather_facts: yes
   tasks:
     - name: Install nginx-domain-assist globally

@@ -1,7 +1,7 @@
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 import {toJson} from "./utils.js";
-import  inquirerService from "./inquirerService.js";
+import inquirerService from "./inquirerService.js";
 
 
 export function hasAllOptionsSet(existingargv, cliOptions) {
@@ -59,19 +59,23 @@ function filterOnlyValidInputs(inputs, cliOptions) {
     }
 return     formattedInputs;
 }
+
+/*
+/**
+ * @param {any[]} processArgs - The process arguments
+ * @param {Object} cliOptions - The command line options
+ * @returns {Promise<Object>} - The promise that resolves with a dynamic JSON object
+ */
 export async function getParametersBasedOnOptions(processArgs, cliOptions) {
 
-    console.log("processArgs", processArgs)
 
     if (hasHelpOrVersion(processArgs)) {
         yargs(hideBin(processArgs)).usage('Usage: npx $0').options(cliOptions).help().version().argv;
         return
     }
 
-
     let inputs = yargs(hideBin(processArgs)).argv;
 
-    // console.log("input args" ,inputs)
 
     if (hasAllOptionsSet(inputs, cliOptions) === false) {
         inputs = await inquirerService.getInteractiveInputs(cliOptions);
@@ -81,11 +85,10 @@ export async function getParametersBasedOnOptions(processArgs, cliOptions) {
     }
 
 
-    const validInputs = filterOnlyValidInputs(inputs, cliOptions);
-
-    return validInputs;
+    return filterOnlyValidInputs(inputs, cliOptions);
 }
 
 export default {
+
     getParametersBasedOnOptions: getParametersBasedOnOptions,
 }

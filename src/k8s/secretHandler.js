@@ -43,6 +43,14 @@ export async function envToJson(filePath) {
 
 export async function handleCreateSecrets(inputs) {
     const {appName, filePath} = inputs
+    const secretGroupName = `${appName}-secret`;
+
+    if(!!filePath){
+        return {
+            secretGroupName: secretGroupName,
+            keys: []
+        }
+    }
 
     const exists =   fileService.fileExists(filePath);
     if(exists === false){
@@ -60,8 +68,9 @@ export async function handleCreateSecrets(inputs) {
     }
     // const entries = await envToJson(filePath);
 
+
     return {
-        secretGroupName: appName,
+        secretGroupName: secretGroupName,
         keys: Object.keys(entries)
     }
 

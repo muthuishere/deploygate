@@ -4,7 +4,6 @@ import path from "path";
 import fileService from "./shared/files.js";
 import * as ejs from "ejs";
 import {runPlayBookContents} from "./ansible/PlaybookRunner.js";
-import chalk from "chalk";
 
 const createDomainOptions = {
 
@@ -45,6 +44,30 @@ const createDomainOptions = {
 };
 
 
+export async function createDomain(hostName, inputs) {
+
+
+
+
+    const { domainName, redirectPort, enableSSL}=inputs
+    console.log("Creating domain based on hostName", hostName);
+    // console.log("Creating domain based on domainName", domainName,redirectPort,enableSSL);
+    const createDomainFilePath = getDomainTemplateNamed('create-redirected-domain.yaml');
+
+    const template = await fileService.readFile(createDomainFilePath);
+    const contents = ejs.render(template, {
+        hostName, domainName, redirectPort, enableSSL
+    });
+
+    // const contents = await renderCreateDomainPlaybook(hostName, inputs);
+    // console.log(contents);
+
+    const result = await runPlayBookContents(contents);
+// console.log(result)
+
+    return result.stdout.join("\n")
+}
+
 export async function handleCreateDomain(processArgs) {
 
     const config = await appConfigHandler.loadDeployGateConfig()
@@ -53,16 +76,7 @@ export async function handleCreateDomain(processArgs) {
     console.log("Creating domain",inputs);
 
     const hostName = config.ansibleHostName;
-
-    const contents = await createDomainBasedOn(hostName, inputs);
-    // console.log(contents);
-
-const result=    await runPlayBookContents(contents);
-// console.log(result)
-
- return result.stdout.join("\n")
-
-
+    return await createDomain(hostName, inputs);
 
 
 }
@@ -72,13 +86,13 @@ export async function handleDeleteDomain(inputs) {
     const domainName = inputs.domainName;
 
 
-    const hostname = config.ansibleHostName;
+    const hostName = config.ansibleHostName;
 
-    const deleteDomainFilePath = getDeleteDomainFilePath();
+    const deleteDomainFilePath = getDomainTemplateNamed('delete-redirected-domain.yaml');
 
     const template = await fileService.readFile(deleteDomainFilePath);
     const contents = ejs.render(template, {
-        hostname, domainName
+        hostName, domainName
     });
     const result=    await runPlayBookContents(contents);
 
@@ -93,7 +107,7 @@ export async function handleDeleteDomain(inputs) {
 
 }
 
-function getDomainStatusOutput(input){
+function parseDomainStatus(input){
 
 
     if(input.code !== 0){
@@ -101,11 +115,10 @@ function getDomainStatusOutput(input){
     }
 
 
-    const findString = "domain-status-by-name"
     const lines=   input.stdout
         .filter((line) => line.trim().startsWith("changed"))
         .filter((line) => {
-            return line.includes(findString)
+            return line.includes("domain-status-by-name")
         });
 
     if(lines.length == 0){
@@ -133,47 +146,23 @@ export async function getDomainStatus({domainName}) {
     const config = await appConfigHandler.loadDeployGateConfig()
 
 
-    const hostname = config.ansibleHostName;
+    const hostName = config.ansibleHostName;
 
-    const domainStatusFilePath = getDomainStatusFilePath();
+    const domainStatusFilePath = getDomainTemplateNamed('delete-redirected-domain.yam');
 
     const template = await fileService.readFile(domainStatusFilePath);
     const contents = ejs.render(template, {
-        hostname, domainName
+        hostName, domainName
     });
     const playbookResult=    await runPlayBookContents(contents);
 
 
 
-    return getDomainStatusOutput(playbookResult);
+    return parseDomainStatus(playbookResult);
 
 }
 
-function getCreateDomainFilePath() {
-    return path.join(fileService.getProjectRootFolder(), 'assets','domainmanager', 'create-redirected-domain.yaml');
+function getDomainTemplateNamed(filePath) {
+    return path.join(fileService.getProjectRootFolder(), 'assets', 'domainmanager', filePath);
 }
-
-
-function getDeleteDomainFilePath() {
-    return path.join(fileService.getProjectRootFolder(), 'assets','domainmanager', 'delete-redirected-domain.yaml');
-}
-
-
-function getDomainStatusFilePath() {
-    return path.join(fileService.getProjectRootFolder(), 'assets','domainmanager', 'get-domain-status.yaml');
-}
-
-
-export async function createDomainBasedOn(hostname, {domainName, redirectPort, enableSSL}) {
-
-    // console.log("Creating domain based on hostname", hostname);
-    // console.log("Creating domain based on domainName", domainName,redirectPort,enableSSL);
-    const createDomainFilePath = getCreateDomainFilePath();
-
-    const template = await fileService.readFile(createDomainFilePath);
-    return ejs.render(template, {
-        hostname, domainName, redirectPort, enableSSL
-    });
-}
-
 

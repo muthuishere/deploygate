@@ -1,6 +1,6 @@
 ---
 - name: Get Domain Status for Nginx
-  hosts: <%= hostname %>
+  hosts: <%= hostName %>
   gather_facts: yes
   tasks:
     - name: Check if npm is installed

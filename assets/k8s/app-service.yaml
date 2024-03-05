@@ -9,5 +9,5 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: <%= appPort %>
-      nodePort: <%= exposedPort %>  # Manually specified NodePort
+      targetPort: <%= appInternalPort %>
+      nodePort: <%= nodePort %>  # Manually specified NodePort

@@ -9,10 +9,18 @@ import {promises as fsPromise} from "fs";
 
 const isWin = process.platform === "win32";
 
+export function runProcessFromFolder(folderPath,command, args){
+ return runProcess(command, args, { cwd: folderPath });
+}
 
-export function runProcess(command, args) {
+
+
+/*
+* @returns {Promise<{stdout: string[], stderr: string[], code: number}>}
+ */
+export function runProcess(command, args, options = {}) {
     return new Promise((resolve, reject) => {
-        const process = spawn(command, args);
+        const process = spawn(command, args,options);
 
         let stdoutData = [];
         let stderrData = [];
@@ -31,8 +39,8 @@ export function runProcess(command, args) {
 
         process.on('close', (code) => {
             // Remove any empty lines that might have been added at the end
-            stdoutData = stdoutData.filter(line => line);
-            stderrData = stderrData.filter(line => line);
+            stdoutData = stdoutData.filter(line => !!line);
+            stderrData = stderrData.filter(line => !!line);
 
             resolve({
                 stdout: stdoutData,
@@ -100,4 +108,41 @@ function createSSHCommand(userRemoteHost, scriptContents) {
     const sshCommand = `ssh ${userRemoteHost} bash <<'EOF'\n${escapedScript}\nEOF`;
 
     return sshCommand;
+}
+
+export function getWorkingFolderName() {
+    const cwd = process.cwd();
+    return path.basename(cwd);
+
+}
+
+function loadEnvFromJson(filePath) {
+
+    return new Promise((resolve, reject) => {
+        // Read the file
+        // Read the file
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                console.error("Error reading the file:", err);
+                reject(err);
+                return;
+            }
+
+            try {
+                // Parse JSON
+                const jsonData = JSON.parse(data);
+
+                // Iterate over keys and set them in process.env
+                Object.keys(jsonData).forEach(key => {
+                    process.env[key] = jsonData[key];
+                });
+
+                console.log("Environment variables loaded successfully.");
+                resolve();
+            } catch (parseErr) {
+                reject(parseErr);
+                console.error("Error parsing JSON:", parseErr);
+            }
+        });
+    });
 }

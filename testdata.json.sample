@@ -1,0 +1,25 @@
+{
+  "deployGateConfig": {
+    "kubeConfigPath": "",
+    "remoteServerAlias": "root@somedomain.com",
+    "ansibleHostName": "somedomain.com",
+    "customRegistryUrl": "regsitry.somedomain.com",
+    "customRegistryCredentialsName": "registry-credentials",
+    "kubeNamespace": "default"
+  },
+  "appConfig": {
+    "appName": "hellonode",
+    "projectRootFolder": "/Users/somedomain/somefolder/hello-node",
+    "buildCommand": "npm run build",
+    "dockerFilePath": "/Users/somedomain/somefolder/hello-node/Dockerfile",
+    "dockerImageTag": "0.0.1",
+    "appImageUrl": "regsitry.somedomain.com/hello-node",
+    "appInternalPort": 8080,
+    "replicas": 1,
+    "kubernetesConfigOutputFolder": "/Users/somedomain/somefolder/hello-node/dist",
+    "envFilePath": "/Users/somedomain/somefolder/hello-node/.env",
+    "domainName": "hellonode.somedomain.com",
+    "nodePort": 7801,
+    "enableSSL": true
+  }
+}

@@ -11,7 +11,7 @@ import {getConfig} from "../__tests/mockData.js";
 
 const processArgs = mockdata.getProcessArgs();
 
-const options =mockdata.getOptions();
+const options =mockdata.getDomainOptions();
 
 const config = mockdata.getConfig();
 

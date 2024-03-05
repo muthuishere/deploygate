@@ -20,6 +20,9 @@ export async function writeFile(path, content) {
 
 }
 
+/*
+@returns {Promise<string>}
+ */
 export async function readFile(filename) {
 
     return new Promise((resolve, reject) => {
@@ -115,6 +118,17 @@ export function folderExists(path) {
     }
 }
 
+export function getAbsolutePath(input) {
+    if(path.isAbsolute(input)){
+        return input;
+    }else {
+        return path.join(process.cwd(),input);
+
+    }
+
+}
+
+
 export async function createSymbolicLink(path, link) {
 
     return new Promise((resolve, reject) => {
@@ -174,6 +188,16 @@ export function getDeliveryFolderName(appName) {
 
     return deliveryFolder;
 }
+export async function getAsJson(jsonFilePath) {
+
+
+    if (fileExists(jsonFilePath) === false) {
+        throw ` file  ${jsonFilePath} does not exists`;
+    }
+
+    const configContents = await readFile(jsonFilePath);
+    return JSON.parse(configContents);
+}
 
 
 
@@ -182,6 +206,7 @@ export default {
     writeFile:writeFile,
     readFile:readFile,
     fileExists:fileExists,
+    createFolder:createFolder,
     folderExists:folderExists,
     getFileContentOrEmpty:getFileContentOrEmpty,
 

@@ -10,11 +10,11 @@
     "publish-package": "npm publish"
   },
   "bin": {
-    "generate-app-config": "bin/generate_app_config.js",
+    "generate-k8s-app-config": "bin/generate_k8s_app_config.js",
+    "delete-k8s-app-config": "bin/delete_k8s_app_config.js",
     "create-domain": "bin/create_domain.js",
     "delete-domain": "bin/delete_domain.js",
     "create-secret": "bin/create_secrets.js",
-    "deploy-app": "bin/deploy_app.js",
     "init-deploy-gate-config": "bin/init_config.js",
     "update-deploy-gate-config": "bin/init_config.js",
     "remove-deploy-gate-config": "bin/remove_config.js"
