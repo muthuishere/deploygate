@@ -1,27 +1,33 @@
 import * as k8sSecretHandler from './secretHandler.js';
-import {envToJson, handleGetAllSecrets, isSecretExists} from './secretHandler.js';
+import {
+    createDockerRegistrySecret,
+    envToJson,
+    handleGetAllSecrets,
+    isRegistrySecretExists,
+    isSecretExists
+} from './secretHandler.js';
 import {assert} from 'chai';
-import * as mockdata from "../../__tests/mockData.js";
+import * as mockdata from "../../../__tests/mockData.js";
 import sinon from "sinon";
-import appConfigHandler from "../appConfigHandler.js";
-import {getEnvFilePath} from "../../__tests/mockData.js";
-import {executeKubectlContents} from "./k8sService.js";
+import globalConfigHandler from "../../config/globalConfigHandler.js";
+import {getGlobalConfig, getEnvFilePath, getTestConfig} from "../../../__tests/mockData.js";
+import {executeKubectlContents} from "../services/k8sService.js";
 import {handleCreateSecrets} from "./secretHandler.js";
 
 describe('k8sSecretHandler', function () {
 
-    let config = mockdata.getConfig();
-    let loadDeployGateConfigStub;
+    let config = null
+    let getGlobalConfigStub;
     beforeEach(() => {
 
 
-        config = mockdata.getConfig();
-        loadDeployGateConfigStub = sinon.stub(appConfigHandler, 'loadDeployGateConfig');
-        loadDeployGateConfigStub.resolves(config);
+        config = mockdata.getGlobalConfig();
+        getGlobalConfigStub = sinon.stub(globalConfigHandler, 'getGlobalConfig');
+        getGlobalConfigStub.resolves(config);
     });
 
     afterEach(() => {
-        loadDeployGateConfigStub.restore();
+        getGlobalConfigStub.restore();
     });
 
     it('should correctly encode a string to base64', async function () {
@@ -100,6 +106,20 @@ describe('k8sSecretHandler', function () {
     });
 
 
+
+    it("createDockerRegistrySecret should create a new Secret in k8s", async function () {
+
+        const dockerRegistrySecret = getTestConfig().dockerRegistrySecret;
+        const result = await createDockerRegistrySecret(dockerRegistrySecret);
+
+        console.log(result);
+        assert.isNotNull(result);
+        const promise = await isRegistrySecretExists(dockerRegistrySecret.secretName);
+        assert.isTrue(promise);
+
+
+
+    });
 
 
 

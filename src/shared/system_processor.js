@@ -6,7 +6,7 @@ import path from "path";
 import logger from "./logger.js";
 import {promises as fsPromise} from "fs";
 
-
+const activeProcesses = new Set();
 const isWin = process.platform === "win32";
 
 export function runProcessFromFolder(folderPath,command, args){
@@ -15,10 +15,28 @@ export function runProcessFromFolder(folderPath,command, args){
 
 
 
-/*
-* @returns {Promise<{stdout: string[], stderr: string[], code: number}>}
+/**
+ * Executes a given command with specified arguments and options, handling the output with optional callbacks.
+ *
+ * @param {string} command - The command to be executed.
+ * @param {string[]} args - An array of strings representing the arguments to be passed to the command.
+ * @param {Object} [options={}] - An object specifying node's child_process.spawn options.
+ * @param {function(string):void} [stdoutHandler=() => {}] - An optional callback function that is called with the output data from the command's stdout.
+ * @param {function(string):void} [stderrHandler=() => {}] - An optional callback function that is called with the output data from the command's stderr.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the stdout, stderr, and exit code of the command.
+ *
+ * @example
+ * runProcess('ls', ['-lh', '/usr'], {},
+ *   data => console.log(`STDOUT: ${data}`),
+ *   data => console.error(`STDERR: ${data}`)
+ * ).then(result => {
+ *   console.log('Process completed with code:', result.code);
+ * }).catch(err => {
+ *   console.error('Process failed:', err);
+ * });
  */
-export function runProcess(command, args, options = {}) {
+export function runProcess(command, args, options = {}, stdoutHandler = () => {}, stderrHandler = () => {}) {
+    logger.debug(`Running command: ${command} ${args.join(' ')}`);
     return new Promise((resolve, reject) => {
         const process = spawn(command, args,options);
 
@@ -27,12 +45,14 @@ export function runProcess(command, args, options = {}) {
 
         process.stdout.on('data', (data) => {
             stdoutData.push(...data.toString().split(/\r?\n/));
+            stdoutHandler(data.toString()); // Invoke stdout handler
             // console.log(data.toString());
             logger.debug(data.toString());
         });
 
         process.stderr.on('data', (data) => {
             stderrData.push(...data.toString().split(/\r?\n/));
+            stderrHandler(data.toString()); // Invoke stderr handler
             // console.error(data.toString());
             logger.error(data.toString());
         });
@@ -41,6 +61,7 @@ export function runProcess(command, args, options = {}) {
             // Remove any empty lines that might have been added at the end
             stdoutData = stdoutData.filter(line => !!line);
             stderrData = stderrData.filter(line => !!line);
+            activeProcesses.delete(process);
 
             resolve({
                 stdout: stdoutData,
@@ -52,8 +73,25 @@ export function runProcess(command, args, options = {}) {
         process.on('error', (err) => {
             reject(err);
         });
+        activeProcesses.add(process);
+
     });
 }
+
+process.on('SIGINT', () => {
+    console.log('Interrupt detected. Terminating processes...');
+
+    // Terminate all active child processes
+    for (const proc of activeProcesses) {
+        proc.kill();
+    }
+
+    // Exit after a short delay to allow processes to terminate gracefully
+    setTimeout(() => {
+        console.log('Exiting...');
+        process.exit();
+    }, 500); // Adjust this delay as needed
+});
 
 
 export function isSudo() {

@@ -1,0 +1,44 @@
+{
+
+  "testDomainOptions": {
+    "domainName": "test.muthuishere.com",
+    "redirectPort": 9898,
+    "enableSSL": true
+  },
+  "dockerRegistrySecret": {
+    "registryUrl": "registry.muthuishere.com",
+    "username": "mydocker",
+    "password": "mydocker",
+    "email": "muthu@deemwar.com",
+    "secretName": "registry-credentials"
+  },
+  "deployGateConfig": {
+    "ansibleHostName": "muthuishere.com",
+    "k8sServerUrl": "https://muthuishere.com",
+    "kubeNamespace": "default",
+    "topLevelDomainName": "muthuishere.com",
+    "registryUrl": "registry.muthuishere.com",
+    "registryUsername": "mydocker",
+    "registryPassword": "mydocker"
+  },
+  "newProjectConfig": {
+    "appName": "hellonode",
+    "projectRootFolder": "/Users/muthuishere/muthu/gitworkspace/infrastructure/cloudnativeprojects/hello-node",
+    "buildCommand": "npm run build",
+    "dockerFilePath": "/Users/muthuishere/muthu/gitworkspace/infrastructure/cloudnativeprojects/hello-node/Dockerfile",
+    "dockerImageTag": "0.0.1",
+    "appImageUrl": "registry.muthuishere.com/hello-node",
+    "appInternalPort": 8080,
+    "replicas": 1,
+    "kubernetesConfigOutputFolder": "/Users/muthuishere/muthu/gitworkspace/infrastructure/cloudnativeprojects/hello-node/dist",
+    "envFilePath": "/Users/muthuishere/muthu/gitworkspace/infrastructure/cloudnativeprojects/hello-node/.env",
+    "domainName": "hellonode.muthuishere.com",
+    "nodePort": 7801,
+    "enableSSL": true
+  },
+  "gitFolders":{
+  "cleanGitFolder": "/Users/muthuishere/muthu/gitworkspace/testdata/git/cleangit",
+  "dirtyGitFolder": "/Users/muthuishere/muthu/gitworkspace/testdata/git/dirtygit",
+  "noGitFolder": "/Users/muthuishere/muthu/gitworkspace/testdata/git/nogit"
+}
+}

@@ -1,5 +1,5 @@
 import {assert, expect} from "chai";
-import {getDefaultValues, getParametersBasedOnOptions, hasAllOptionsSet} from "./input_arg_processor.js";
+import {getDefaultValues, getProcessedCommandLineParameters, hasAllOptionsSet} from "./input_arg_processor.js";
 
 import sinon from "sinon";
 
@@ -59,7 +59,7 @@ describe('Input argument processor tests', function () {
         expect(responses).to.be.deep.equal({domain: "example.com"});
     })
 
-    it('getParametersBasedOnOptions should return help if help is specified', async function () {
+    it('getProcessedCommandLineParameters should return help if help is specified', async function () {
         sinon.stub(process, 'exit');
         const options = {
 
@@ -106,14 +106,14 @@ describe('Input argument processor tests', function () {
                 default: false,
             },
         };
-        const responses = await getParametersBasedOnOptions(['xxx', 'xxx', '--help'], options);
+        const responses = await getProcessedCommandLineParameters(['xxx', 'xxx', '--help'], options);
         console.log(responses);
         assert(process.exit.calledWith(0));
         process.exit.restore();
 
 
     })
-    it('getParametersBasedOnOptions should return appropriate values', async function () {
+    it('getProcessedCommandLineParameters should return appropriate values', async function () {
 
         const processArgs = [
             '/Users/xx/.nvm/versions/node/v18.7.0/bin/node',
@@ -168,7 +168,7 @@ describe('Input argument processor tests', function () {
                 default: false,
             },
         };
-        const responses = await getParametersBasedOnOptions(processArgs, options);
+        const responses = await getProcessedCommandLineParameters(processArgs, options);
         console.log(responses);
 
         //expect responses contains domain: "example.com",path: "/var/www/example.com",nginxFolder: "/etc/nginx",useSSL: false

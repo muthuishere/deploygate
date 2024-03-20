@@ -1,20 +1,24 @@
 #! /usr/bin/env node
-import * as appConfigHandler from "../src/appConfigHandler.js";
+import * as globalConfigHandler from "../src/config/globalConfigHandler.js";
 import chalk from "chalk";
 import input_arg_processor from "../src/shared/input_arg_processor.js";
-import {handleGenerateK8sAppConfig} from "../src/k8s/k8sHandler.js";
+import {handleGenerateK8sAppConfig} from "../src/k8s/deployments/k8sHandler.js";
 import Path from "path";
 import  {getAbsolutePath} from "../src/shared/files.js";
 import {getWorkingFolderName} from "../src/shared/system_processor.js";
 import {getBuildCommand} from "../src/shared/projectfinder.js";
-import {fileExistsValidator, onlyStringsAndNumbersValidator} from "../src/shared/validator.js";
+import {
+    fileExistsValidator,
+    onlyStringsAndNumbersAndDotValidator,
+    onlyStringsAndNumbersValidator
+} from "../src/shared/validator.js";
 
 const options = {
     appName: {
         message: 'What is the name of your application?',
         name: 'appName',
         demandOption: true,
-        describe: 'The name of your application. This will be used as an identifier.',
+        describe: 'The name of your application. This will be used as an identifier domain name.',
         type: 'string',
         default: 'MyApp',
         validate:onlyStringsAndNumbersValidator
@@ -27,6 +31,15 @@ const options = {
         type: 'string',
         default: '.',
         validate:fileExistsValidator
+    },
+    configFileName: {
+        message: 'What should we call the config name ?',
+        name: 'configFileName',
+        demandOption: true,
+        describe: 'What should we call the config name',
+        type: 'string',
+        default: 'deploygateprojectconfig.json',
+        validate:onlyStringsAndNumbersAndDotValidator
     },
     buildCommand: {
         message: 'What command should be used to build your app?',
@@ -118,19 +131,19 @@ const options = {
 
     try {
         // console.log(Object.keys(options))
-        console.log(Path.join(process.cwd(),"."))
+        // console.log(Path.join(process.cwd(),"."))
 
         const processArgs = process.argv;
 
-        if (appConfigHandler.appConfigExists() === false) {
-            console.log('App Config does not exist. Please run init-deploy-gate-config')
+        if (globalConfigHandler.globalConfigExists() === false) {
+            console.log('Global Config does not exist. Please run init-deploy-gate-config')
             process.exit(1);
         }
 
         options.appName.default = getWorkingFolderName();
         // options.projectRootFolder.default = process.cwd()
-        const config = await appConfigHandler.loadDeployGateConfig();
-        options.appImageUrl.default = config.customRegistryUrl + "/" + options.appName.default;
+        const config = await globalConfigHandler.getGlobalConfig();
+        options.appImageUrl.default = config.registryUrl + "/" + options.appName.default;
         options.domainName.default = options.appName.default + ".com";
         options.buildCommand.default = getBuildCommand(options.projectRootFolder.default);
 
@@ -140,6 +153,7 @@ const options = {
          * @typedef {Object} AppConfig
          * @property {string} appName - The name of the application
          * @property {number} appPort - The port on which the application runs
+         * @property {string} configFileName - The name of the configuration file
          * @property {number} exposedPort - The port exposed by the application
          * @property {string} envFilePath - The path to the environment file
          * @property {number} replicas - The number of replicas for the application
@@ -156,7 +170,7 @@ const options = {
          * @type {AppConfig}
          */
 
-        const input = await input_arg_processor.getParametersBasedOnOptions(processArgs, options);
+        const input = await input_arg_processor.getProcessedCommandLineParameters(processArgs, options);
 
 
 
@@ -173,14 +187,14 @@ const options = {
         input.kubernetesConfigOutputFolder = getAbsolutePath(input.kubernetesConfigOutputFolder);
         input.dockerFilePath = getAbsolutePath(input.dockerFilePath);
         input.projectRootFolder = getAbsolutePath(input.projectRootFolder);
+        input.configFileName = input.projectRootFolder + input.configFileName.trim();
 
 
-        console.log(input)
+        // console.log(input)
         await handleGenerateK8sAppConfig(input)
 
         console.log(chalk.green("Successfully generated Kubernetes configuration files for " + input.appName));
 
-        // await createStaticDomain(inputs);
     } catch (err) {
 
         console.error(chalk.red("Error Creating Domain"), err);

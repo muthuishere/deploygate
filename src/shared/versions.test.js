@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import * as versionManager from "./versionManager.js";
+import * as versionManager from "./version_manager.js";
 
 describe('versionManager', () => {
 

@@ -3,7 +3,7 @@ import * as inputArgProcessor from './input_arg_processor.js';
 import  inquirerService from "./inquirerService.js";
 import  fileService from "./files.js";
 import sinon from "sinon";
-import {handleRemoveConfig, saveDeployGateConfig} from "../appConfigHandler.js";
+import {handleRemoveConfig, saveDeployGateConfig} from "../config/globalConfigHandler.js";
 
 describe('getParametersBasedOnOptions', () => {
     let getInteractiveInputsStub;
@@ -37,7 +37,7 @@ describe('getParametersBasedOnOptions', () => {
 
         getInteractiveInputsStub.resolves({ option1: 'value1', option2: 'value2' });
 
-        const result = await inputArgProcessor.getParametersBasedOnOptions(processArgs, cliOptions);
+        const result = await inputArgProcessor.getProcessedCommandLineParameters(processArgs, cliOptions);
 
         expect(result).to.deep.equal({ option1: 'value1', option2: 'defaultoption2' });
         expect(getInteractiveInputsStub.called).to.be.false; // getInteractiveInputs should not be called
@@ -61,7 +61,7 @@ describe('getParametersBasedOnOptions', () => {
         // Define the result that getInteractiveInputs should return
         getInteractiveInputsStub.resolves({ option1: 'value1', option2: 'value2' });
 
-        const result = await inputArgProcessor.getParametersBasedOnOptions(processArgs, cliOptions);
+        const result = await inputArgProcessor.getProcessedCommandLineParameters(processArgs, cliOptions);
 
         expect(result).to.deep.equal({ option1: 'value1', option2: 'value2' });
         expect(getInteractiveInputsStub.called).to.be.true; // getInteractiveInputs should be called

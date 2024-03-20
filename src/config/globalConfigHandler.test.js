@@ -1,13 +1,13 @@
 import { expect } from 'chai';
-import { saveDeployGateConfig, loadDeployGateConfig, CONFIG_PATH } from './appConfigHandler.js';
+import { saveDeployGateConfig, getGlobalConfig, CONFIG_PATH } from './globalConfigHandler.js';
 import fs from 'fs';
-import {writeFile} from "./shared/files.js";
+import {writeFile} from "../shared/files.js";
 
 function getJsonFileFrom(path) {
     return JSON.parse(fs.readFileSync(path, 'utf8'));
 }
 
-describe('appConfigHandler', () => {
+describe('globalConfigHandler', () => {
     const mockConfig = { key: 'value' };
 
     afterEach(() => {
@@ -23,9 +23,9 @@ describe('appConfigHandler', () => {
         expect(savedConfig).to.deep.equal(mockConfig);
     });
 
-    it('loadDeployGateConfig', async () => {
+    it('getGlobalConfig', async () => {
         await writeFile(CONFIG_PATH, JSON.stringify(mockConfig, null, 2));
-        const loadedConfig = await loadDeployGateConfig();
+        const loadedConfig = await getGlobalConfig();
         expect(loadedConfig).to.deep.equal(mockConfig);
     });
 

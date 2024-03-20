@@ -1,7 +1,7 @@
 import {runProcess} from "./system_processor.js";
 import logger from "./logger.js";
 import path from "path";
-
+import fileService from "./files.js";
 /**
  * Check if the Git status is clean in a given folder.
  * @param {string} folderPath - The path to the folder to check.
@@ -10,11 +10,11 @@ import path from "path";
 export async function isGitStatusClean(folderPath) {
 
 
-        if(fs.existsSync(folderPath) === false){
+        if(fileService.fileExists(folderPath) === false){
             throw new Error(`Folder does not exist: ${folderPath}`);
         }
         const gitFolderPath = path.join(folderPath, '.git');
-        if (fs.existsSync(gitFolderPath) === false) {
+        if (fileService.fileExists(gitFolderPath) === false) {
             throw new Error(`Folder is not a git repository: ${folderPath}`);
         }
     try {

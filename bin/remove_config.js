@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Import necessary modules
 
-import {handleRemoveConfig} from "../src/appConfigHandler.js";
+import {handleRemoveConfig} from "../src/config/globalConfigHandler.js";
 
 // Handle the create-domain command
 

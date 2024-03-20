@@ -2,10 +2,10 @@
 // Import necessary modules
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import * as appConfigHandler from "../src/appConfigHandler.js";
-import {handleCreateDomain} from "../src/domainHandler.js";
+import * as globalConfigHandler from "../src/config/globalConfigHandler.js";
+import {handleCreateDomain} from "../src/domain/domainDeleteHandler.js";
 import chalk from "chalk";
-import {handleCreateSecrets} from "../src/k8s/secretHandler.js";
+import {handleCreateSecrets} from "../src/k8s/secrets/secretHandler.js";
 import input_arg_processor from "../src/shared/input_arg_processor.js";
 
 // Handle the create-domain command
@@ -44,11 +44,11 @@ const secretOptions= {
 
         const processArgs = process.argv;
 
-        if(appConfigHandler.appConfigExists() === false){
-            console.log('App Config does not exist. Please run init-deploy-gate-config')
+        if(globalConfigHandler.globalConfigExists() === false){
+            console.log('Global Config does not exist. Please run init-deploy-gate-config')
             process.exit(1);
         }
-        const inputs = await input_arg_processor.getParametersBasedOnOptions(processArgs,secretOptions);
+        const inputs = await input_arg_processor.getProcessedCommandLineParameters(processArgs,secretOptions);
         await   handleCreateSecrets(inputs)
 
         console.log(chalk.green("Secrets Created Successfully"));

@@ -1,4 +1,4 @@
-### generate app
+### Ensure Application is deployed and running with single command
 
 
-- create files on folder
+

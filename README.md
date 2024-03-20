@@ -15,7 +15,19 @@ This project is a command-line interface (CLI) tool that helps manage your self-
 
 #### Pre-requisites
 - Your Local machine has Ansible installed 
-- Your local machine has kubectl installed
+- Install sshpass on your local machine for password authentication 
+
+```
+
+## For Mac
+brew install hudochenkov/sshpass/sshpass
+
+## For Ubuntu
+sudo apt-get install sshpass
+
+```
+
+- Your local machine has Docker installed with Docker Compose
 - Your local machine has a jq installed
 - your local machine has an alias for the remote machine , so that you can access the remote machine with a single command
 - Make sure you have a domain name configured with NGINX

@@ -1,6 +1,6 @@
-import {fileURLToPath} from "url";
 import Path from "path";
 import files, {getProjectRootFolder} from "../src/shared/files.js";
+import * as globalConfigHandler from "../src/config/globalConfigHandler.js";
 
 export const processArgs = [
     '',
@@ -10,8 +10,9 @@ export const processArgs = [
 let obj= null;
 
 export async function initTestEnv() {
+    //copy the testdata.json.example to testdata.json
     const contents = await files.readFile(Path.join(getProjectRootFolder(),'testdata.json'));
-    console.log(contents);
+    // console.log(contents);
     obj = JSON.parse(contents);
 }
 
@@ -24,14 +25,9 @@ export async function initTestEnv() {
  */
 
 /**
- * @typedef {Object} DeployGateConfig
- * @property {string} domainName - The domain name for deployment
- * @property {string} remoteServerAlias - The alias for the remote server
- * @property {string} ansibleHostName - The host name for Ansible
- * @property {string} customRegistryUrl - The URL for the custom registry
- * @property {string} customRegistryCredentialsName - The name for the custom registry credentials
- * @property {string} kubeNamespace - The Kubernetes namespace
- * @property {string} kubeConfigPath - The path to the Kubernetes config
+ *
+ * @typedef {import('../src/config/globalConfigHandler.js').getGlobalConfig} DeployGateConfigPromise
+ * @typedef {DeployGateConfigPromise} DeployGateConfig
  */
 
 /**
@@ -58,10 +54,25 @@ export async function initTestEnv() {
  * @property {string} dirtyGitFolder - The dirty git folder
  * @property {string} noGitFolder - The folder without git
  */
+//    "registryUrl": "registry.muthuishere.com",
+//     "username": "mydocker",
+//     "password": "mydocker",
+//     "email": "muthu@deemwar.com",
+//     "secretName": "registry-credentials"
+
+/**
+ * @typedef {Object} DockerRegistrySecret
+ * @property {string} registryUrl - The URL for the registry
+ * @property {string} username - The username for the registry
+ * @property {string} password - The password for the registry
+ * @property {string} email - The email for the registry
+ * @property {string} secretName - The name for the secret
+ */
 
 /**
  * @typedef {Object} TestData
  * @property {TestDomainOptions} testDomainOptions - The options for testing the domain
+ * @property {DockerRegistrySecret} dockerRegistrySecret - The options for testing the domain
  * @property {DeployGateConfig} deployGateConfig - The configuration for the deployment gate
  * @property {NewProjectConfig} newProjectConfig - The configuration for the new project
  * @property {GitFolders} gitFolders - The folders for testing git
@@ -72,21 +83,32 @@ export async function initTestEnv() {
  * @returns {TestData}
  */
 export function getTestConfig(){
-    return obj;
+    return structuredClone(obj);
 }
-
+/**
+ *
+ * @returns TestDomainOptions
+ */
 export function getDomainOptions(){
-    const options = obj.testDomainOptions
-    return {...options};
+    return  getTestConfig().testDomainOptions
+}
+/**
+ *
+ * @returns NewProjectConfig
+ */
+export function getNewProjectConfig(){
+    return  getTestConfig().newProjectConfig
+
 }
 
 /**
  *
- * @returns {customRegistryCredentialsName, kubeNamespace, remoteServerAlias, kubeConfigPath, ansibleHostName, customRegistryUrl}
+ * @returns DeployGateConfig
  */
-export function getConfig(){
-    const config = obj.newProjectConfig
-    return {...config};
+export function getGlobalConfig(){
+    const testConfig = getTestConfig();
+    // console.log(testConfig);
+    return  testConfig.deployGateConfig
 
 }
 

@@ -1,19 +1,22 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import appConfigHandler from "./appConfigHandler.js";
-import input_arg_processor from "./shared/input_arg_processor.js";
-import  * as mockdata from '../__tests/mockData.js';
-import {handleCreateDomain, handleDeleteDomain, getDomainStatus} from './domainHandler.js';
-import fileService from "./shared/files.js";
-import {getConfig} from "../__tests/mockData.js";
+import globalConfigHandler from "../config/globalConfigHandler.js";
+import input_arg_processor from "../shared/input_arg_processor.js";
+import  * as mockdata from '../../__tests/mockData.js';
+
+import fileService from "../shared/files.js";
+import {getGlobalConfig, getNewProjectConfig} from "../../__tests/mockData.js";
+import {getDomainStatus} from "./domainStatusHandler.js";
+import {handleCreateDomain} from "./domainCreateHandler.js";
+import {handleDeleteDomain} from "./domainDeleteHandler.js";
 
 
 const processArgs = mockdata.getProcessArgs();
 
 const options =mockdata.getDomainOptions();
 
-const config = mockdata.getConfig();
+const config = mockdata.getNewProjectConfig();
 
 async function createTestDomain(processArgs) {
 
@@ -29,17 +32,17 @@ describe('handleCreateDomain', () => {
 
 
 
-    let loadDeployGateConfigStub, getParametersBasedOnOptionsStub, writeFileStub;
+    let getGlobalConfigStub, getParametersBasedOnOptionsStub, writeFileStub;
 
     beforeEach(() => {
-        loadDeployGateConfigStub = sinon.stub(appConfigHandler, 'loadDeployGateConfig');
-        loadDeployGateConfigStub.resolves(mockdata.getConfig());
+        getGlobalConfigStub = sinon.stub(globalConfigHandler, 'getGlobalConfig');
+        getGlobalConfigStub.resolves(mockdata.getGlobalConfig());
         getParametersBasedOnOptionsStub = sinon.stub(input_arg_processor, 'getParametersBasedOnOptions');
         // writeFileStub = sinon.stub(fileService, 'writeFile');
     });
 
     afterEach(() => {
-        loadDeployGateConfigStub.restore();
+        getGlobalConfigStub.restore();
         getParametersBasedOnOptionsStub.restore();
         // writeFileStub.restore();
     });
@@ -51,7 +54,7 @@ describe('handleCreateDomain', () => {
         getParametersBasedOnOptionsStub.resolves(options);
         await createTestDomain(processArgs);
 
-        expect(loadDeployGateConfigStub.calledOnce).to.be.true;
+        expect(getGlobalConfigStub.calledOnce).to.be.true;
         expect(getParametersBasedOnOptionsStub.calledOnce).to.be.true;
         // expect(writeFileStub.calledOnceWith('create-redirected-domain.yaml', contents)).to.be.true;
     });
@@ -62,7 +65,7 @@ describe('handleCreateDomain', () => {
         getParametersBasedOnOptionsStub.resolves(options);
         await createTestDomain(processArgs);
 
-        expect(loadDeployGateConfigStub.calledOnce).to.be.true;
+        expect(getGlobalConfigStub.calledOnce).to.be.true;
         expect(getParametersBasedOnOptionsStub.calledOnce).to.be.true;
         // expect(writeFileStub.calledOnceWith('create-redirected-domain.yaml', contents)).to.be.true;
     });
@@ -99,7 +102,7 @@ describe('handleCreateDomain', () => {
         }catch (e) {
 
             console.log(e);
-            expect(loadDeployGateConfigStub.calledOnce).to.be.true;
+            expect(getGlobalConfigStub.calledOnce).to.be.true;
             expect(getParametersBasedOnOptionsStub.calledOnce).to.be.true;
         }
 
@@ -110,17 +113,17 @@ describe('handleCreateDomain', () => {
 });
 
 describe('handleDeleteDomain', () => {
-    let loadDeployGateConfigStub, getParametersBasedOnOptionsStub, writeFileStub;
+    let getGlobalConfigStub, getParametersBasedOnOptionsStub, writeFileStub;
 
     beforeEach(() => {
-        loadDeployGateConfigStub = sinon.stub(appConfigHandler, 'loadDeployGateConfig');
-        loadDeployGateConfigStub.resolves(mockdata.getConfig());
+        getGlobalConfigStub = sinon.stub(globalConfigHandler, 'getGlobalConfig');
+        getGlobalConfigStub.resolves(mockdata.getNewProjectConfig());
         getParametersBasedOnOptionsStub = sinon.stub(input_arg_processor, 'getParametersBasedOnOptions');
         // writeFileStub = sinon.stub(fileService, 'writeFile');
     });
 
     afterEach(() => {
-        loadDeployGateConfigStub.restore();
+        getGlobalConfigStub.restore();
         getParametersBasedOnOptionsStub.restore();
         // writeFileStub.restore();
     });
@@ -142,7 +145,7 @@ describe('handleDeleteDomain', () => {
 
         // const contents = 'test contents';
 
-        loadDeployGateConfigStub.resolves(config);
+        getGlobalConfigStub.resolves(config);
         getParametersBasedOnOptionsStub.resolves(options);
         // writeFileStub.resolves();
 
@@ -152,7 +155,7 @@ describe('handleDeleteDomain', () => {
         }catch (e) {
 
             console.log(e);
-            expect(loadDeployGateConfigStub.calledOnce).to.be.true;
+            expect(getGlobalConfigStub.calledOnce).to.be.true;
             expect(getParametersBasedOnOptionsStub.calledOnce).to.be.true;
         }
 
